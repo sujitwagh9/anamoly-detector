@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anomaly Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios/50/000000/bar-chart.png">
+
+    <script>
+        function toggleDarkMode() {
+            const htmlElement = document.documentElement;
+            const isDark = htmlElement.classList.toggle("dark");
+            localStorage.setItem("darkMode", isDark ? "enabled" : "disabled");
+            document.getElementById("moon-icon").classList.toggle("hidden", isDark);
+            document.getElementById("sun-icon").classList.toggle("hidden", !isDark);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const isDarkMode = localStorage.getItem("darkMode") === "enabled";
+            document.documentElement.classList.toggle("dark", isDarkMode);
+            document.getElementById("moon-icon").classList.toggle("hidden", isDarkMode);
+            document.getElementById("sun-icon").classList.toggle("hidden", !isDarkMode);
+
+            // Scroll reveal effect
+            document.querySelectorAll('.section').forEach(section => {
+                setTimeout(() => section.classList.add('visible'), 300);
+            });
+        });
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        .section { min-height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; padding: 3rem; opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .visible { opacity: 1 !important; transform: translateY(0) !important; }
+
+        
+    </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-[#121212] dark:text-gray-100">
+    <nav class="bg-[#1a1a1a] p-4 fixed w-full top-0 shadow-md z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <h1 class="text-xl font-bold flex items-center text-white">
+                <img src="https://img.icons8.com/ios-filled/50/4ade80/bar-chart.png" alt="Logo" class="h-7 w-7 mr-2">
+                8Bit
+            </h1>
+    
+            <!-- Navigation Links -->
+            <div class="flex space-x-6 items-center">
+                <a href="#home" class="text-white hover:text-green-500 transition flex items-center gap-1">
+                    <i class="fas fa-home text-lg"></i> Home
+                </a>
+                <a href="#features" class="text-white hover:text-green-500 transition flex items-center gap-1">
+                    <i class="fas fa-tools text-lg"></i> Features
+                </a>
+                <a href="#contact" class="text-white hover:text-green-500 transition flex items-center gap-1">
+                    <i class="fas fa-envelope text-lg"></i> Contact Us
+                </a>
+            </div>
+    
+            <!-- Dark Mode Toggle -->
+            <button onclick="toggleDarkMode()" class="ml-4 bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-md shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center">
+                <i id="moon-icon" class="fas fa-moon text-lg"></i>
+                <i id="sun-icon" class="fas fa-sun hidden text-lg"></i>
+            </button>
+        </div>
+    </nav>
+    
+
+    <!-- Landing Section (#home) -->
+    <section id="home" class="section bg-gray-100 dark:bg-[#1a1a1a]">
+        <div>
+            <h1 class="text-5xl font-extrabold">Anomaly Detection System</h1>
+            <p class="text-lg mt-4 text-gray-700 dark:text-gray-300">Detect anomalies in datasets with ease.</p>
+            <a href="{{ url_for('upload') }}" class="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-400 transition inline-block">
+                <i class="fas fa-upload"></i> Upload Data
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section (#features) -->
+    <section id="features" class="section bg-white dark:bg-[#121212]">
+        <div>
+            <h2 class="text-4xl font-bold">Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div class="p-6 bg-gray-100 dark:bg-[#1a1a1a] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
+                    <i class="fas fa-database text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-semibold mt-2">Data Upload</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Upload CSV files for anomaly detection.</p>
+                </div>
+                <div class="p-6 bg-gray-100 dark:bg-[#1a1a1a] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
+                    <i class="fas fa-chart-bar text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-semibold mt-2">Analysis</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Get instant analysis of anomalies.</p>
+                </div>
+                <div class="p-6 bg-gray-100 dark:bg-[#1a1a1a] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
+                    <i class="fas fa-file-download text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-semibold mt-2">Export Results</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Download detailed reports.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technique Section (#technique) -->
+    <section id="technique" class="section bg-gray-100 dark:bg-[#1a1a1a]">
+        <div>
+            <h2 class="text-4xl font-bold">Technique</h2>
+            <p class="text-lg mt-4 text-gray-700 dark:text-gray-300">Advanced methods for anomaly detection.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="p-6 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
+                    <i class="fas fa-calculator text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-semibold mt-2">Statistical Methods</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Z-Score, IQR, and Moving Average techniques.</p>
+                </div>
+                <div class="p-6 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
+                    <i class="fas fa-brain text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-semibold mt-2">Machine Learning</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Isolation Forest for robust detection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us Section (#contact) -->
+    <section id="contact" class="section bg-white dark:bg-[#121212]">
+        <div>
+            <h2 class="text-4xl font-bold">Contact Us</h2>
+            <p class="text-lg mt-4 text-gray-700 dark:text-gray-300">We’d love to hear from you!</p>
+            <div class="mt-6 max-w-md mx-auto">
+                <form action="#" class="space-y-4">
+                    <input type="text" placeholder="Your Name" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <input type="email" placeholder="Your Email" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <textarea placeholder="Your Message" rows="4" class="w-full p-3 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+                    <button type="submit" class="w-full px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-400 transition">
+                        <i class="fas fa-paper-plane mr-2"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section (#founder) -->
+    <section id="founder" class="section bg-gray-100 dark:bg-[#1a1a1a]">
+        <div>
+            <h2 class="text-4xl font-bold">Founder</h2>
+            <p class="text-lg mt-4 text-gray-700 dark:text-gray-300">Meet the mind behind the project.</p>
+            <div class="mt-6 max-w-md mx-auto p-6 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg border-2 border-gray-700 focus:border-pink-600 hover:shadow-xl hover:scale-105 transition">
+                <img src=static\profile-pic.png alt="Founder Image" class="w-36 h-36 mx-auto rounded-full object-cover mb-4">
+                <h3 class="text-2xl font-semibold mt-4">Sujit Wagh</h3>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Software Developer & Innovator</p>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Passionate about uncovering insights through data.</p>
+                <div class="flex justify-center gap-4 mt-4">
+                    <a href="https://x.com/IamSujitWagh" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-green-500 transition">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/sujitwagh9/" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-green-500 transition">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="https://github.com/sujitwagh9" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-green-500 transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Scroll reveal already handled in DOMContentLoaded above
+    </script>
+</body>
+</html>

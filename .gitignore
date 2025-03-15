@@ -1,0 +1,32 @@
+# Ignore virtual environment
+venv/
+*.pyc
+__pycache__/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore uploads (if you don't want to track uploaded data)
+uploads/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore Python dependencies if using a virtualenv
+env/
+*.venv
+
+# Ignore IDE/editor files
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# Ignore CSV and other generated files
+anomalies.csv
+weather_data.csv
+
+# Ignore Python dependency files
+pip-log.txt

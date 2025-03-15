@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Data - Anomaly Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios/50/000000/bar-chart.png">
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        .section { 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 3rem; 
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-[#121212] dark:text-gray-100">
+    <nav class="bg-[#1a1a1a] p-4 fixed w-full top-0 shadow-md z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="flex items-center text-white text-xl font-bold hover:text-green-500 transition">
+                <img src="https://img.icons8.com/ios-filled/50/4ade80/bar-chart.png" alt="Logo" class="h-7 w-7 mr-2">
+                8Bit
+            </a>            
+            <!-- <div class="flex space-x-6 items-center">
+                <a href="/" class="text-white hover:text-green-500 transition flex items-center gap-1">
+                    <i class="fas fa-home text-lg"></i> Home
+                </a>
+            </div> -->
+        </div>
+    </nav>
+
+    <section id="upload" class="section bg-gray-100 dark:bg-[#1a1a1a]">
+        <div>
+            <h2 class="text-4xl font-bold">Upload Your Dataset</h2>
+            <p class="text-lg mt-4 text-gray-700 dark:text-gray-300">Upload a CSV file to detect anomalies.</p>
+            <form action="/detect" method="POST" enctype="multipart/form-data" class="mt-6 p-6 bg-white dark:bg-[#121212] rounded-xl shadow-lg border-2 border-gray-700">
+                <input type="file" name="file" accept=".csv" class="block w-full text-lg text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 rounded-lg p-3 mt-4 focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button type="submit" class="mt-6 px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-400 transition text-lg">
+                    <i class="fas fa-upload"></i> Upload & Detect
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            ScrollReveal().reveal('.section', {
+                duration: 800,
+                distance: '50px',
+                origin: 'bottom',
+                opacity: 0,
+                reset: false
+            });
+        });
+    </script>
+</body>
+</html>
