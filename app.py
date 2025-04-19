@@ -5,6 +5,9 @@ import pandas as pd
 import numpy as np
 from scipy.stats import zscore
 from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, RepeatVector, TimeDistributed
 from typing import Tuple, Dict
 import logging
 
@@ -43,6 +46,59 @@ def isolation_forest_method(df: pd.DataFrame, target_col: str) -> pd.Series:
     model = IsolationForest(contamination=0.05, random_state=42)
     return pd.Series(model.fit_predict(df[[target_col]]) == -1, index=df.index)
 
+def create_sequences(data: np.ndarray, seq_length: int = 10) -> np.ndarray:
+    """Create sequences for LSTM input."""
+    sequences = []
+    for i in range(len(data) - seq_length + 1):
+        sequences.append(data[i:i + seq_length])
+    return np.array(sequences)
+
+def lstm_method(df: pd.DataFrame, target_col: str, seq_length: int = 10, epochs: int = 20) -> pd.Series:
+    """Detect anomalies using LSTM Autoencoder."""
+    try:
+        # Preprocess data
+        scaler = StandardScaler()
+        scaled_data = scaler.fit_transform(df[[target_col]].values)
+        
+        # Create sequences
+        sequences = create_sequences(scaled_data, seq_length)
+        if len(sequences) < 1:
+            logger.warning("Not enough data for LSTM sequences")
+            return pd.Series([False] * len(df), index=df.index)
+
+        # Build LSTM Autoencoder
+        model = Sequential([
+            LSTM(64, activation='relu', input_shape=(seq_length, 1), return_sequences=False),
+            RepeatVector(seq_length),
+            LSTM(64, activation='relu', return_sequences=True),
+            TimeDistributed(Dense(1))
+        ])
+        model.compile(optimizer='adam', loss='mse')
+        
+        # Reshape for LSTM [samples, timesteps, features]
+        X = sequences.reshape((sequences.shape[0], sequences.shape[1], 1))
+        
+        # Train model
+        model.fit(X, X, epochs=epochs, batch_size=32, verbose=0)
+        
+        # Predict and calculate reconstruction error
+        preds = model.predict(X, verbose=0)
+        mse = np.mean(np.power(X - preds, 2), axis=(1, 2))
+        
+        # Determine threshold for anomalies (mean + 2 * std)
+        threshold = np.mean(mse) + 2 * np.std(mse)
+        anomalies = mse > threshold
+        
+        # Align anomalies with original dataframe
+        result = [False] * len(df)
+        for i, is_anomaly in enumerate(anomalies):
+            result[i + seq_length - 1] = is_anomaly
+        
+        return pd.Series(result, index=df.index)
+    except Exception as e:
+        logger.error(f"LSTM method failed: {e}")
+        return pd.Series([False] * len(df), index=df.index)
+
 def detect_anomalies(df: pd.DataFrame, target_col: str) -> Tuple[pd.DataFrame, str, Dict[str, int]]:
     """Detect anomalies and select the best method based on 5% anomaly target."""
     methods = {
@@ -50,6 +106,7 @@ def detect_anomalies(df: pd.DataFrame, target_col: str) -> Tuple[pd.DataFrame, s
         "Moving Average": moving_average_method(df, target_col),
         "IQR": iqr_method(df, target_col),
         "Isolation Forest": isolation_forest_method(df, target_col),
+        "LSTM": lstm_method(df, target_col)
     }
 
     anomaly_counts = {method: int(anomalies.sum()) for method, anomalies in methods.items()}
@@ -107,7 +164,7 @@ def detect():
     target_col = numerical_cols[0]
     df = df.dropna(subset=[target_col])
 
-    # Add a date-like index if not present (fixed AttributeError issue)
+    # Add a date-like index if not present
     if not any(col.lower() == "date" for col in df.columns):
         df["date"] = pd.date_range(start="2023-01-01", periods=len(df), freq="D").strftime("%Y-%m-%d")
 
@@ -115,14 +172,28 @@ def detect():
     df.attrs["best_method"] = best_method
     df.to_csv(ANOMALIES_FILE, index=False)
 
+    # Prepare data for visualization and table
+    anomaly_indices = df[df["anomaly"]].index.tolist()
+    anomaly_values = df[df["anomaly"]][target_col].tolist()
+    anomaly_dates = df[df["anomaly"]]["date"].tolist()
+    anomaly_data = df[df["anomaly"]].to_dict(orient="records")
+    columns = df.columns.tolist()
+
     return render_template(
         "detect.html",
         data=df.to_dict(orient="records"),
-        dates=df["date"].tolist(),  # For the line chart
-        values=df[target_col].tolist(),  # For the line chart
-        anomalies=df[df["anomaly"]].to_dict(orient="records"),  # Pass anomalies separately
+        dates=df["date"].tolist(),
+        values=df[target_col].tolist(),
+        anomalies=anomaly_data,
         best_method=best_method,
-        target_col=target_col
+        target_col=target_col,
+        anomaly_indices=anomaly_indices,
+        anomaly_values=anomaly_values,
+        anomaly_dates=anomaly_dates,
+        total_anomalies=len(anomaly_indices),
+        total_data=len(df),
+        method_results=method_results,
+        columns=columns
     )
 
 @app.route("/download/anomalies.csv")
@@ -131,7 +202,6 @@ def download_anomalies():
         return "No anomalies detected yet. Please run anomaly detection first.", 404
     return send_file(ANOMALIES_FILE, as_attachment=True, mimetype="text/csv")
 
-
 @app.route("/contact", methods=["POST"])
 def contact():
     name = request.form.get("name")
@@ -139,7 +209,6 @@ def contact():
     message = request.form.get("message")
     # Process the data (e.g., save to DB, send email)
     return "Message sent!"
-
 
 if __name__ == "__main__":
     app.run(debug=True)
