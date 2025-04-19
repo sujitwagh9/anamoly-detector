@@ -40,7 +40,6 @@
                 <img src="https://img.icons8.com/ios-filled/50/4ade80/bar-chart.png" alt="Logo" class="h-7 w-7 mr-2">
                 8Bit
             </a>
-            
 
             <!-- Navigation Links -->
             <div class="flex space-x-6 items-center">
@@ -56,6 +55,10 @@
                 <a href="#contact" class="text-white hover:text-green-500 transition flex items-center gap-1">
                     <i class="fas fa-envelope text-lg"></i> Contact Us
                 </a>
+                <button id="dark-mode-toggle" class="text-white hover:text-green-500 transition flex items-center gap-1">
+                    <i id="moon-icon" class="fas fa-moon text-lg hidden"></i>
+                    <i id="sun-icon" class="fas fa-sun text-lg"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -109,45 +112,44 @@
                 <div class="p-6 bg-white dark:bg-[#121212] rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
                     <i class="fas fa-brain text-4xl text-green-500"></i>
                     <h3 class="text-xl font-semibold mt-2">Machine Learning</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Isolation Forest for robust detection.</p>
+                    <p class="text-gray-600 dark:text-gray-400">Isolation Forest and LSTM for robust detection.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Us Section (#contact) -->
-<section id="contact" class="section bg-white dark:bg-[#121212]">
-    <div class="w-full max-w-7xl px-6 md:px-12 lg:px-24 xl:px-32">
-        <h2 class="text-4xl font-bold text-center">Contact Us</h2>
-        <p class="text-lg mt-4 text-gray-700 dark:text-gray-300 text-center">
-            We’d love to hear from you! Feel free to reach out.
-        </p>
+    <section id="contact" class="section bg-white dark:bg-[#121212]">
+        <div class="w-full max-w-7xl px-6 md:px-12 lg:px-24 xl:px-32">
+            <h2 class="text-4xl font-bold text-center">Contact Us</h2>
+            <p class="text-lg mt-4 text-gray-700 dark:text-gray-300 text-center">
+                We’d love to hear from you! Feel free to reach out.
+            </p>
 
-        <div class="mt-8 max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto">
-            <form action="https://formspree.io/f/your-form-id" method="POST" class="space-y-6">
-                <div>
-                    <label for="name" class="sr-only">Your Name</label>
-                    <input id="name" name="name" type="text" placeholder="Your Name" 
-                        class="w-full p-4 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                </div>
-                <div>
-                    <label for="email" class="sr-only">Your Email</label>
-                    <input id="email" name="email" type="email" placeholder="Your Email" 
-                        class="w-full p-4 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                </div>
-                <div>
-                    <label for="message" class="sr-only">Your Message</label>
-                    <textarea id="message" name="message" placeholder="Your Message" rows="5" 
-                        class="w-full p-4 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
-                </div>
-                <button type="submit" class="w-full px-6 py-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-400 transition text-lg">
-                    <i class="fas fa-paper-plane mr-2"></i> Send Message
-                </button>
-            </form>
+            <div class="mt-8 max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto">
+                <form action="https://formspree.io/f/your-form-id" method="POST" class="space-y-6">
+                    <div>
+                        <label for="name" class="sr-only">Your Name</label>
+                        <input id="name" name="name" type="text" placeholder="Your Name" 
+                            class="w-full p-4 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    </div>
+                    <div>
+                        <label for="email" class="sr-only">Your Email</label>
+                        <input id="email" name="email" type="email" placeholder="Your Email" 
+                            class="w-full p-4 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    </div>
+                    <div>
+                        <label for="message" class="sr-only">Your Message</label>
+                        <textarea id="message" name="message" placeholder="Your Message" rows="5" 
+                            class="w-full p-4 rounded-lg bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full px-6 py-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-400 transition text-lg">
+                        <i class="fas fa-paper-plane mr-2"></i> Send Message
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
-</section>
-
+    </section>
 
     <!-- Founder Section (#founder) -->
     <section id="founder" class="section bg-gray-100 dark:bg-[#1a1a1a]">
@@ -155,7 +157,7 @@
             <h2 class="text-4xl font-bold">Founder</h2>
             <p class="text-lg mt-4 text-gray-700 dark:text-gray-300">Meet the mind behind the project.</p>
             <div class="mt-6 max-w-md mx-auto p-6 bg-white dark:bg-[#121212] rounded-xl shadow-lg border-2 border-gray-700 hover:shadow-xl hover:scale-105 transition">
-                <img src=static\profile-pic.png alt="Founder Image" class="w-36 h-36 mx-auto rounded-full object-cover mb-4">
+                <img src="/static/profile-pic.png" alt="Founder Image" class="w-36 h-36 mx-auto rounded-full object-cover mb-4">
                 <h3 class="text-2xl font-semibold mt-4">Sujit Wagh</h3>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Software Developer & Innovator</p>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Passionate about uncovering insights through data.</p>
@@ -188,19 +190,20 @@
                     htmlElement.classList.add("dark");
                     moonIcon.classList.remove("hidden");
                     sunIcon.classList.add("hidden");
-                    localStorage.setItem("darkMode", "enabled");
+                    document.cookie = "darkMode=enabled; path=/";
                 } else {
                     htmlElement.classList.remove("dark");
                     moonIcon.classList.add("hidden");
                     sunIcon.classList.remove("hidden");
-                    localStorage.setItem("darkMode", "disabled");
+                    document.cookie = "darkMode=disabled; path=/";
                 }
             }
 
-            // Initial theme setup: Check local storage or default to light mode
-            const savedDarkMode = localStorage.getItem("darkMode");
-            const isDarkMode = savedDarkMode === "enabled" || 
-                              (savedDarkMode === null && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            // Initial theme setup: Check cookie or system preference
+            const savedDarkMode = document.cookie.includes("darkMode=enabled");
+            const isDarkMode = savedDarkMode || 
+                              (document.cookie.includes("darkMode") === false && 
+                               window.matchMedia("(prefers-color-scheme: dark)").matches);
             updateTheme(isDarkMode);
 
             // Toggle theme on button click
