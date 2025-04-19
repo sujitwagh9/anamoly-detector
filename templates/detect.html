@@ -6,6 +6,7 @@
     <title>Anomaly Detection Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://img.icons8.com/ios/50/000000/bar-chart.png">
 </head>
@@ -27,6 +28,10 @@
                 <a href="/upload" class="text-white hover:text-green-500 transition flex items-center gap-1">
                     <i class="fas fa-upload text-lg"></i> Upload
                 </a>
+                <button id="dark-mode-toggle" class="text-white hover:text-green-500 transition flex items-center gap-1">
+                    <i id="moon-icon" class="fas fa-moon text-lg hidden"></i>
+                    <i id="sun-icon" class="fas fa-sun text-lg"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -37,26 +42,84 @@
             Anomaly Detection Report
         </h1>
 
+        <!-- Best Method Highlight -->
+        <section class="mb-12 text-center bg-blue-100 dark:bg-[#1a1a1a] p-6 rounded-xl shadow-lg border-2 border-blue-500 dark:border-blue-400">
+            <h2 class="text-2xl font-semibold mb-4 flex justify-center items-center gap-3">
+                <i class="fas fa-star text-yellow-500 text-lg"></i> Best Detection Method: 
+                <span class="text-blue-600">{{ best_method }}</span>
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+                The {{ best_method }} method detected {{ total_anomalies }} anomalies, closest to the target 5% anomaly rate.
+            </p>
+        </section>
+
+        <!-- Statistics -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div class="bg-blue-200 dark:bg-[#1a1a1a] p-6 rounded-xl text-center shadow-lg hover:shadow-xl hover:scale-105 transition border-2 border-blue-500 dark:border-blue-400">
                 <h2 class="text-xl font-semibold leading-relaxed">Total Data Points</h2>
-                <p class="text-3xl font-bold mt-2">{{ data|length }}</p>
+                <p class="text-3xl font-bold mt-2">{{ total_data }}</p>
             </div>
             <div class="bg-red-200 dark:bg-[#1a1a1a] p-6 rounded-xl text-center shadow-lg hover:shadow-xl hover:scale-105 transition border-2 border-red-500 dark:border-red-400">
                 <h2 class="text-xl font-semibold leading-relaxed">Total Anomalies</h2>
-                <p class="text-3xl font-bold mt-2">{{ anomalies|length }}</p>
+                <p class="text-3xl font-bold mt-2">{{ total_anomalies }}</p>
             </div>
-            <div class="bg-green-200 dark:bg-[#1a1a1a] p-6 rounded-xl text-center shadow-lg hover:shadow-xl hover:scale-105 transition border-2 border-green-500 dark:border-green-400">
+            <div class="bg-green-200 dark:bg-[#1a1a1a] p-6 rounded-xl text-center shadow-lg hover:shadow-xl hover:scale-105 transition border-2 border-green-500 dark:border-blue-400">
                 <h2 class="text-xl font-semibold leading-relaxed">Normal Data</h2>
-                <p class="text-3xl font-bold mt-2">{{ data|length - anomalies|length }}</p>
+                <p class="text-3xl font-bold mt-2">{{ total_data - total_anomalies }}</p>
             </div>
         </section>
 
+        <!-- Method-Specific Metrics -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-center mb-4">Method Comparison</h2>
+            <div id="method-bar-chart" class="w-full h-64"></div>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {% for method, count in method_results.items() %}
+                <div class="p-4 bg-gray-100 dark:bg-[#1a1a1a] rounded-xl shadow-lg text-center {% if method == best_method %} border-2 border-green-500 {% endif %}">
+                    <h3 class="text-lg font-semibold">{{ method }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Anomalies: {{ count }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Anomaly Table -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-center mb-4">Anomalies Detected</h2>
+            {% if anomalies %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse bg-gray-100 dark:bg-[#1a1a1a] rounded-xl shadow-lg">
+                    <thead>
+                        <tr class="bg-gray-200 dark:bg-[#2a2a2a]">
+                            {% for col in columns %}
+                            <th class="p-3 font-semibold">{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for anomaly in anomalies %}
+                        <tr class="border-t border-gray-300 dark:border-gray-700">
+                            {% for col in columns %}
+                            <td class="p-3">{{ anomaly[col] }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-gray-600 dark:text-gray-400">No anomalies detected.</p>
+            {% endif %}
+        </section>
+
+        <!-- Data Visualization -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-center mb-4">Data Visualization</h2>
+            <div id="anomaly-plot" class="w-full h-96"></div>
+        </section>
+
+        <!-- Action Buttons -->
         <section class="mt-12 text-center">
-            <p class="text-xl font-semibold mb-4 flex justify-center items-center gap-3 leading-relaxed">
-                <i class="fas fa-search text-blue-600 text-lg"></i> Best Detection Method: 
-                <span class="text-blue-600">{{ best_method }}</span>
-            </p>
             <div class="flex justify-center gap-6">
                 <a href="/download/anomalies.csv" 
                    class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-400 transition flex items-center gap-2 text-lg">
@@ -68,6 +131,21 @@
                 </a>
             </div>
         </section>
+
+        <!-- Data Injection -->
+        <div id="anomaly-data" style="display: none;" 
+             data-anomaly='{{ {
+                 "dates": dates|default([]),
+                 "values": values|default([]),
+                 "anomalyDates": anomaly_dates|default([]),
+                 "anomalyValues": anomaly_values|default([]),
+                 "methodResults": method_results|default({}),
+                 "bestMethod": best_method|default("Unknown"),
+                 "targetCol": target_col|default("Value")
+             }|tojson|safe }}'></div>
+
+        <!-- Load Plotly Script -->
+        <script src="/static/anomaly_plots.js"></script>
     </div>
 </body>
 </html>
