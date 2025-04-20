@@ -1,3 +1,5 @@
+venv/
+uploads/
 # Ignore virtual environment
 venv/
 *.pyc
